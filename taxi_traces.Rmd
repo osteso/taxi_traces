@@ -24,8 +24,14 @@ We will use the following R packages:
 - tmap  
 
 ```{r include=FALSE, cache=FALSE}
+
+list.of.packages <- c("data.table", "lwgeom", "sf", "leaflet", "knitr","ggplot2", "osmdata", "tmap")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(data.table)
 library(sf)
+library(lwgeom)
 library(leaflet)
 library(knitr)
 library(ggplot2)
