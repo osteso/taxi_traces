@@ -16,12 +16,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Nowadays most car drivers use GPS services to reach their destinations. Often this is done via a mobile phone, but soon connected cars will be the norm. As a consequence, the amount of geo-positional data of car trips is continuously increasing. In this blog post I will illustrate how we can use R to analyse and visualise GPS traces. To this end we will use a subset of the open source [T-Drive trajectory data sample](https://www.microsoft.com/en-us/research/publication/t-drive-trajectory-data-sample/), which covers one week of 10.357 taxi trajectories in Beijing [@t-drive-trajectory-data-sample]. The dataset is quite large and for our purposes only a subset is needed. I chose trajectories for which the frequency of sampling is "mostly" greater than 1/60 Hz. This leaves us with data from 10 taxis, more than enough for our current purposes.  
 We will use the following R packages:  
-- data.table  
-- sf  
-- leaflet  
-- ggplot2  
-- osmdata  
-- tmap  
+
+* `data.table`
+* `sf`
+* `leaflet`
+* `ggplot2`
+* `osmdata`
+* `tmap`  
 
 ```{r include=FALSE, cache=FALSE}
 
@@ -69,7 +70,7 @@ traces <- traces[!is.na(speed_kph) & speed_kph < 200]
 
 The unique statement makes sure that there are no duplicate rows. 
 
-Now, what if we want to know the distance traveled by each taxi driver for each day of the week? Using data.table and lubridate, it is very simple, and using ggplot2 we can visualise the result in a histogram:
+Now, what if we want to know the distance traveled by each taxi driver for each day of the week? Using `data.table` and `lubridate`, it is very simple, and using `ggplot2` we can visualise the result in a histogram:
 
 ```{r}
 traces[, day := weekdays(time)]
@@ -93,7 +94,7 @@ Many more histograms can be plotted from the data, but you got the gist of it!
 
 ## Visualise the traces on a map
 
-Using sf and leaflet we can visualise the GPS traces on a map. As a first step, we will use the st_linestring and st_sfc functions of the sf package to create a geometry column made of linestrings connecting consecutive points of the data. Then we will plot these linestrings on a map and use a color palette illustrating the speed of the taxis. For practicality, we will limit ourselves to data of one day of the week, say Tuesday:
+Using `sf` and `leaflet` we can visualise the GPS traces on a map. As a first step, we will use the `st_linestring()` and `st_sfc()` functions of the `sf` package to create a geometry column made of linestrings connecting consecutive points of the data. Then we will plot these linestrings on a map and use a color palette illustrating the speed of the taxis. For practicality, we will limit ourselves to data of one day of the week, say Tuesday:
 
 ```{r}
 traces[, lonsh := shift(longitude)]
@@ -128,9 +129,9 @@ m
 
 ## What about Beijing's districts?
 
-The package sf is quite powerful. In addition to linestrings, we can also use points and polygons and a variety of functions to investigate relative properties of geoemetries. For example, we can divide Beijing in its districs and investigate where the taxis travel the most. 
+The package `sf` is quite powerful. In addition to linestrings, we can also use points and polygons and a variety of functions to investigate relative properties of geometries. For example, we can divide Beijing in its districs and investigate where the taxis travel the most. 
 
-To do this, we first need the boundaries of the districts. Following the guidelines of Florian Zenoni's blog post of the 10/10/2017, we get this information from the OpenStreetMaps API, using the package osmdata:
+To do this, we first need the boundaries of the districts. Following the guidelines of [Florian Zenoni's blog post](https://altran-data-analytics.netlify.com/2017/10/10/2017-10-10-creating-maps-with-r-and-openstreetmap/), we get this information from OpenStreetMap's API, using the `osmdata` package:
 
 ```{r}
 boundaries <- opq(bbox = 'Beijing, China') %>%
@@ -142,7 +143,7 @@ districts <- boundaries$osm_multipolygons
 sf_plot <- st_set_crs(sf_plot, st_crs(districts)$epsg)
 ```
 
-Using tmap, we can now plot the GPS traces on top of the Districts:
+Using `tmap`, we can now plot the GPS traces on top of the Districts:
 
 ```{r fig3, fig.width=10, echo=FALSE}
 tm_style_col_blind() +
@@ -154,7 +155,7 @@ tm_style_col_blind() +
 
 That's great! 
 
-To conclude, let's find out the most popular districts among taxi drivers on Tuesday. Again, using the functionalities of the sf package, we can do this with just a few lines of code:
+To conclude, let's find out the most popular districts among taxi drivers on Tuesday. Again, using the functionalities of the `sf` package, we can do this with just a few lines of code:
 
 ```{r}
 # for convenience, we neglect lines that intersect two or more districts
