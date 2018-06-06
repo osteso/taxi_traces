@@ -33,9 +33,7 @@ list.of.packages <- c("data.table",
                       "knitr",
                       "ggplot2", 
                       "osmdata", 
-                      "tmap",
-                      "lubridate",
-                      "geosphere")
+                      "tmap")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -47,15 +45,14 @@ library(knitr)
 library(ggplot2)
 library(osmdata)
 library(tmap)
-
-traces <- readRDS("./data.rds")
 ```
 
 ## Get familiar with the data
 
 To save time, I already prepared a data.table with the following columns: taxi_id, time, longitude and latitude:
 
-```{r}
+```{r, echo=FALSE}
+traces <- readRDS("./data.rds")
 kable(head(traces))
 ```
 
@@ -94,7 +91,7 @@ ggplot(daily_distance, aes(day_dx_km, ..density.., fill = cut(day_dx_km, 100))) 
   geom_histogram(bins = 40, show.legend = FALSE) +
   scale_fill_discrete(h = c(200, 10))+
   theme_minimal() +
-  labs(x = "Distance travelled per day (km)", y = "Density") +
+  labs(x = "Distance traveled per day (km)", y = "Density") +
   ggtitle("Histogram")
 
 ```
@@ -154,7 +151,7 @@ sf_plot <- st_set_crs(sf_plot, st_crs(districts)$epsg)
 
 Using `tmap`, we can now plot the GPS traces on top of the Districts:
 
-```{r fig3, fig.width=10, echo=FALSE}
+```{r fig3, fig.width=10}
 tm_style_col_blind() +
   tm_shape(districts) + 
   tm_polygons(title = 'Beijing Districts', border.col = 'grey40', col = 'name.en', alpha = 0.6) +
